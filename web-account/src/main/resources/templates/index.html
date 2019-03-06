@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" th:href="@{css/normalize.min.css}">
+    <link rel="stylesheet" th:href="@{css/style.css}">
+    <script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.js"></script>
+    <script type="text/javascript" src="/js/md5.js"></script>
+    <script>
+        $(function () {
+            function adTime() {
+                var username = $("input[name=username]").val();
+                var userpassword = $("input[name=userpwd]").val();
+                if (username == "" || userpassword == "") {
+                    alert("请填写完整的用户名和密码!")
+                    document.execCommand('Refresh')
+                }
+            }
+        })
+
+        $(function () {
+            $("#loginButton").click(function () {
+
+                var pwd = $("input[name=userpwd]").val();
+                var password = $.md5(pwd);
+                $("input[name=userpassword]").attr("value", password);
+
+                $("#loginForm").ajaxSubmit({
+                    url: "/api/v1/account/login",
+                    dataType: "json",
+                    type: "POST",
+                    success: function (data) {
+                        alert(data.message);
+                        switch (data.resultCode) {
+                            case "1000":
+                                location.href = "/home";
+                                break;
+                        }
+                    }
+                })
+            })
+        })
+
+
+    </script>
+</head>
+
+<body>
+
+<div class="form">
+    <div id="login">
+        <h1>登录页面</h1>
+
+        <form method="post" id="loginForm">
+
+            <div class="field-wrap">
+                <input type="text" name="username" required autocomplete="off" placeholder="用户名/手机号*"/>
+            </div>
+
+            <div class="field-wrap">
+                <input hidden name="userpassword">
+                <input type="password" name="userpwd" required autocomplete="off" placeholder="密码*"/>
+            </div>
+            <p class="forgot"><a href="/signUp.htm">注册账号</a></p>
+            <p class="forgot"><a href="/findPwd.htm">忘记密码</a></p>
+            <button type="button" class="button button-block" id="loginButton">登录</button>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+
+<!--<table border="1">-->
+<!--<tr>-->
+<!--<td>用户名</td>-->
+<!--<td><input type="text" name="username" onchange="adTime()"></td>-->
+<!--</tr>-->
+<!--<tr>-->
+<!--<td>密码</td>-->
+<!--<td><input type="password" name="userpassword" onchange="adTime()"></td>-->
+<!--</tr>-->
+<!--<tr>-->
+<!--<td colspan="2"><a href="/findPwd.htm">找回密码</a>&nbsp;&nbsp;<a href="/signUp.htm">新用户注册</a></td>-->
+<!--</tr>-->
+<!--<tr>-->
+<!--<td colspan="2"><input type="submit" value="登陆">&nbsp;&nbsp;<input type="reset" value="重置"></td>-->
+<!--</tr>-->
+<!--</table>-->
+
+

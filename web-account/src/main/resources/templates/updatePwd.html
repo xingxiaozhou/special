@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" th:href="@{css/normalize.min.css}">
+    <link rel="stylesheet" th:href="@{css/style.css}">
+    <script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.js"></script>
+    <script type="text/javascript" src="/js/md5.js"></script>
+    <script>
+        function updatePwd() {
+            var pwd = $("input[name=userpwd]").val();
+            var pwd2 = $("input[name=userpwd2]").val();
+            var password = $.md5(pwd);
+            var password2 = $.md5(pwd2);
+            $("input[name=userpassword]").attr("value", password);
+            $("input[name=userpassword2]").attr("value", password2);
+            $("#updatePwdForm").ajaxSubmit({
+                url: "/api/v1/account/updateuserpwd",
+                dataType: "json",
+                type: "get",
+                success: function (data) {
+                    alert(data.message);
+                    switch (data.resultCode){
+                        case "1000":
+                            alert("跳转login");
+                            location.href="/userLogin.htm";
+                            break;
+                        case "200":
+                            // location.href="/findPwd.htm";
+                            break;
+                    }
+                }
+            })
+        }
+
+        $(function () {
+            /**
+             * 修改密码
+             */
+            $("#updatePwd").click(function () {
+                var pwd1 = $("#pwd1").val();
+                var pwd2 = $("#pwd2").val();
+                //密码正则表达式，必须同时含有字母和数字并且长度在6-18之间
+                var reg = new RegExp(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/)
+                if (reg.test(pwd1)) {
+                    if (pwd1 == pwd2) {
+                        updatePwd();
+                    } else {
+                        alert("两次输入密码不匹配")
+                    }
+                } else {
+                    alert("密码必须同时含有字母和数字并且长度在6-18之间")
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="form">
+    <!--重置密码-->
+    <div id="findPwd">
+        <h1>重置密码页面</h1>
+        <form  method="get" id="updatePwdForm">
+            <input type="hidden" name="verifycode" th:value="${session.emailCode}">
+            <input type="hidden" name="userEmail" th:value="${session.email}">
+            <div class="field-wrap">
+                <label>
+                    </span>
+                </label>
+                <input hidden name="userpassword">
+                <input type="password" required autocomplete="off" placeholder="请输入新密码*" id="pwd1" name="userpwd"/>
+            </div>
+
+            <div class="field-wrap">
+                <label>
+                    </span>
+                </label>
+                <input hidden name="userpassword2">
+                <input type="password" required autocomplete="off" placeholder="再次输入密码*" id="pwd2"
+                       name="userpwd2"/>
+            </div>
+
+            <button type="button" class="button button-block" id="updatePwd">确定</button>
+
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="commons/fragement :: head"></head>
+<script type="text/javascript" th:src="@{/js/jquery-1.8.3.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.form.js}"></script>
+<script>
+</script>
+<script th:inline="javascript">
+    $(function () {
+        /*<![CDATA[*/
+        var isAddMenu = /*[[${isAddMenu}]]*/ null;
+        var isUpdateMenu = /*[[${isUpdateMenu}]]*/ null;
+        var menu = /*[[${menu}]]*/ null;
+        /*]]>*/
+        if (isAddMenu == true) {
+            alert("菜单添加成功")
+            location.href = "/menu.htm";
+        } else if (isAddMenu == false) {
+            alert("菜单添加失败，请重新添加");
+        }
+
+        if (isUpdateMenu == true) {
+            alert("菜单修改成功")
+            location.href = "/menu.htm";
+        } else if (isUpdateMenu == false) {
+            alert("菜单修改失败，请重新修改");
+        }
+
+        if (menu != null) {
+            $("img").show();
+        }
+    })
+
+</script>
+
+<body>
+<nav th:replace="commons/fragement :: bodyTop"></nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="commons/fragement :: bodyLeft"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <!--/*@thymesVar id="menu" type="cn.vp.bean.Menu"*/-->
+            <h2 th:text="${activity ne null}?'修改页面':'添加页面'"></h2>
+            <div class="table-responsive">
+                <form th:action="${activity eq null}?'/activityAdd.do':'activityUpdate.do'" method="post" id="menuForm"
+                      enctype="multipart/form-data">
+                    <input type="hidden" name="_method" value="put" th:if="${activity ne null}">
+                    <input type="hidden" name="id" th:if="${activity ne null}" th:value="${activity.id}">
+                    <table class="table table-striped table-sm">
+                        <tbody>
+                        <tr>
+                            <td>活跃天数</td>
+                            <td><input type="text" name="activityDays"  th:value="${activity ne null}?${activity.activityDays}"></td>
+                        </tr>
+                        <tr>
+                            <td>优惠券类型</td>
+                            <td>
+                                <select name="coupon.id">
+                                    <option value="0" th:selected="activity eq null">无</option>
+                                    <option th:each="cType : ${session.coupons}" th:text="${cType.couponName}+${cType.couponCode}+'元优惠券'"
+                                            th:value="${cType.id}"
+                                            th:selected="${activity ne null}?${activity.coupon.id==cType.id}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>是否开启</td>
+                            <td>
+                                <select name="isopen">
+                                    <option value="0" th:selected="${activity ne null}?${activity.isopen}">关闭</option>
+                                    <option value="1"  th:selected="${activity ne null}?${activity.isopen}">开启</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input type="submit" th:value="${activity ne null}?'修改':'添加'"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="commons/onload_js :: onloadJS"></div>
+
+</body>
+
+</html>

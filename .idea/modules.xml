@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/back-admin/back-admin.iml" filepath="$PROJECT_DIR$/back-admin/back-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/back-comments/back-comments.iml" filepath="$PROJECT_DIR$/back-comments/back-comments.iml" />
+      <module fileurl="file://$PROJECT_DIR$/back-product/back-product.iml" filepath="$PROJECT_DIR$/back-product/back-product.iml" />
+      <module fileurl="file://$PROJECT_DIR$/back-stage/back-stage.iml" filepath="$PROJECT_DIR$/back-stage/back-stage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/back-user/back-user.iml" filepath="$PROJECT_DIR$/back-user/back-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/special.iml" filepath="$PROJECT_DIR$/special.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-account/web-account.iml" filepath="$PROJECT_DIR$/web-account/web-account.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-homepage/web-homepage.iml" filepath="$PROJECT_DIR$/web-homepage/web-homepage.iml" />
+    </modules>
+  </component>
+</project>

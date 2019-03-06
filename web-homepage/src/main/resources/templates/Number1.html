@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>1号店作业版</title>
+	<link rel="stylesheet" href="css/types.css">
+	<link rel="stylesheet" href="css/cssreset.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/js/jquery.form.js"></script>
+	<script>
+        function loadMenu() {
+            /**
+             * 菜单导航栏ajax
+             */
+            $.ajax({
+                url: "/api/v1/home/category",
+                dataType: "json",
+                type: "get",
+                success: function (data) {
+                    var data2 = eval(data.dataInfo);
+                    $.each(data2, function (i, vals1) {
+                        if (vals1.parentId == 0) {
+                            $("#menu").append("<li class='nav_item'><a href='" + vals1.hrefUrl + "'>" + vals1.menuName + "</a><span class='jt'>&gt;</span>\n" +
+                                "        <div class='sub_menu'>\n" +
+                                "            <div class='leftmenu'>\n" +
+                                "                <dl id='menu_" + vals1.id + "'>\n" +
+                                "                </dl>\n" +
+                                "            </div>\n" +
+                                "        </div>\n" +
+                                "    </li>");
+                            $.each(data2, function (j, vals2) {
+                                if (vals2.parentId == vals1.id) {
+                                    $("#menu_" + vals1.id).append("<dt>" + vals2.menuName + "</a></dt>");
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+
+            /**
+             * 广告ajax
+             */
+            $.ajax({
+                url: "/api/v1/home/advert",
+                dataType: "json",
+                type: "get",
+                success: function (data) {
+                    if (data.resultCode== 200) {
+                        alert("无广告信息")
+                    } else {
+                        var data2 = eval(data.dataInfo);
+                        $.each(data2, function (n, vals) {
+                            setTimeout(function () {
+                                $(".activeimg").html("")
+                                $(".activeimg").append("<p>" + vals.adTitle + "</p>" +
+                                    "<a href='" + vals.adUrl + "'><img src='" + vals.adImage + "' style='width: 64px;height: 48px;'></a>");
+                            }, n * 2000)
+
+                        })
+                    }
+                }
+            })
+
+            /**
+             * 商品ajax
+			 * 1.分类ajax
+			 * 2.商品
+             */
+            $.ajax({
+                url: "/api/v1/home/getcateproducts",
+                dataType: "json",
+                type: "get",
+                success: function (data) {
+                    var data2 = eval(data.dataInfo);
+                    $.each(data2,function (i,vals) {
+                        $("#window").append("<div class='menu' id='cate_"+vals.id+"'>\n" +
+                            "  				 	<div class='mtop'>\n" +
+                            "   					<h3>"+vals.proTitle+"</h3>\n" +
+                            "  					</div>\n" +
+
+
+                            "				 </div>\n" +
+                            "				 <n></n><div style='clear: both'></div>");
+                    })
+                    $.each(data2,function (j,vals) {
+
+                        $("#cate_" + vals.categoryId).append("<div class='c_view c_viewBorder' >\n" +
+                            "<div class='border_type1' id='pro_" + vals.id + "'>\n" +
+                            "  <ul style='margin: 10px 60px'>\n" +
+                            "    <li style='font-size: 15px;'>" + vals.proTitle + "</li>\n" +
+                            "    <li style='color: #999;font-size: 13px'>" + vals.proDesc + "</li>\n" +
+                            "  </ul>\n" +
+                            "</div>\n" +
+                            "</div>");
+                    }
+					)
+                    //
+						// $.each(vals.productImagesList,function (k,vals2) {
+						// 	$("#pro_"+vals2.productId).append("<img style='width: 190px;height: 110px' src='"+vals2.imageUrl+"'>");
+                    //     })
+                    // })
+
+                }
+            })
+        }
+
+	</script>
+
+</head>
+<body onload="loadMenu()">
+
+<!-- 顶部导航-->
+<div class="header">
+	<div class="nav-top">
+		<div class="wrap">
+			<div class="tleft">
+				<span th:if="${session.user} ne null">欢迎您,<a href="/address.htm" th:text="${session.user.userName}"></a></span>
+				<span th:if="${session.user} eq null">Hi,请<a href="/userLogin.htm">登录</a>/<a href="signUp.htm">注册</a></span>
+			</div>
+			<div class="tright">
+				<ul>
+					<li><a href="#">&nbsp;我的1号店&nbsp;</a>|</li>
+					<li><a href="#">&nbsp;收藏夹&nbsp;</a>|</li>
+					<li><a href="#">&nbsp;掌上1号店&nbsp;</a>|</li>
+					<li><a href="#">&nbsp;客户服务&nbsp;</a>|</li>
+					<li><a href="#">&nbsp;网站导航&nbsp;</a>|</li>
+					<li><a href="#">&nbsp;关于我们&nbsp;</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="nav-mid">
+		<div class="wrap2">
+			<div class="logo">
+			</div>
+			<div class="search">
+				<form class="step">
+					<div class="kuang"><input style="font-size: 13px;color: #999999" type="text" placeholder="请输入关键字..."></div>
+					<div class="an"><input type="button" value="搜索"/></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div style="position: relative;width: 1252px;height: 450px;left: 40px">
+	<!--菜单导航-->
+	<nav>
+		<div class="all">
+			<a href="#">全部商品分类</a>
+		</div>
+		<ul id="menu">
+		</ul>
+	</nav>
+
+	<!--广告图片-->
+	<div class="wrap4">
+		<div class="activeimg">
+		</div>
+	</div>
+
+</div>
+
+
+<!--展览窗口 1-->
+<div id="window">
+
+
+</div>
+
+
+
+<!--<div class="border_type1" id="pro_">
+	<ul style="margin: 10px 60px">
+		<li style="font-size: 15px;">吃货天堂</li>
+		<li style="color: #999;font-size: 13px">满49减10</li>
+	</ul>
+
+</div>
+<div class="border_type2">
+	<ul style="margin: 10px 60px">
+		<li style="font-size: 15px;">1号酒窖</li>
+		<li style="color: #999;font-size: 13px">百威哈啤酒两件7折</li>
+	</ul>
+	<img src="images/sec1-3.jpg">
+</div>-->
+
+<!--版权-->
+<div id="footer">
+	<p>
+		<a>我们的团队</a> | <a>网站联盟</a> | <a>热门搜索</a> | <a>友情链接</a> | <a>1号店社区</a> | <a>诚征英才</a> | <a>商家登录</a> | <a>供应商登录</a>
+		| <a>放心搜</a> | <a>1号店新品</a> | <a>开放平台</a>
+	</p>
+	<p>
+		<a>沪ICP备14050023号</a> | <a>合字B1.B2-20130004</a> | <a>营业执照</a> | <a>互联网药品信息服务资格证</a> | <a>互联网药品交易服务资格证</a>
+	</p>
+	<p>Copyright&copy; 1号店网上超市 2007-201g，All Rights Reserved</p>
+</div>
+
+</body>
+</html>

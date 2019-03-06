@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        div{
+            width: 600px;
+            height: 600px;
+            margin: 0px auto;
+            padding: 0px;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+    <form method="post" th:action="@{/addemployee}" action="/addemployee">
+        <table border="1">
+            <tr>
+                <td>id</td>
+                <td>
+                    <input type="hidden" name="_method" value="put" th:if="${(employeeEdit!=null)}">
+                    <input name="id"  th:value="${(employeeEdit!=null)}?${employeeEdit.id}" readonly></td>
+            </tr>
+            <tr>
+                <td>名字</td>
+                <td><input th:value="${(employeeEdit!=null)}?${employeeEdit.lastName}" name="lastName"></td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td><input type="email" name="email" th:value="${(employeeEdit!=null)}?${employeeEdit.email}"></td>
+            </tr>
+            <tr>
+                <td>性别</td>
+                <td><input th:checked="${(employeeEdit!=null)}?${employeeEdit.gender==1}" type="radio" name="gender" value="1">男 <input  th:checked="${(employeeEdit!=null)}?${employeeEdit.gender==0}" type="radio" name="gender" value="0">女</td>
+            </tr>
+            <tr>
+                <td>部门 </td>
+                <td>
+
+                    <select name="department.id">
+                        <option  th:each="department :${departments}" th:selected="${(employeeEdit!=null)}?${employeeEdit.department.id==department.id}" th:value="${department.id}" th:text="${department.departmentName}"></option>
+                    </select>
+
+                </td>
+            </tr>
+            <tr>
+                <td>入职日期</td>
+                <td><input th:value="${employeeEdit!=null}?${#dates.format(employeeEdit.birth,'yyyy-MM-dd')}" type="date" name="birth"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+
+                    <input type="submit" th:value="${employeeEdit!=null}?'修改':'新增'" >
+
+                </td>
+
+            </tr>
+
+        </table>
+
+
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vp.dao.OrderCommentMapper">
+  <resultMap id="BaseResultMap" type="cn.vp.bean.OrderComment">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_score" jdbcType="INTEGER" property="commentScore" />
+    <result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="is_review" jdbcType="BIT" property="isReview" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id, user_id, comment_score, comment_content, user_nickname, createtime, 
+    is_review
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order_comment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_order_comment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.vp.bean.OrderComment">
+    insert into tb_order_comment (id, order_id, user_id, 
+      comment_score, comment_content, user_nickname, 
+      createtime, is_review)
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{commentScore,jdbcType=INTEGER}, #{commentContent,jdbcType=VARCHAR}, #{userNickname,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{isReview,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.vp.bean.OrderComment">
+    insert into tb_order_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="commentScore != null">
+        comment_score,
+      </if>
+      <if test="commentContent != null">
+        comment_content,
+      </if>
+      <if test="userNickname != null">
+        user_nickname,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="isReview != null">
+        is_review,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentScore != null">
+        #{commentScore,jdbcType=INTEGER},
+      </if>
+      <if test="commentContent != null">
+        #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="userNickname != null">
+        #{userNickname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isReview != null">
+        #{isReview,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.vp.bean.OrderComment">
+    update tb_order_comment
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentScore != null">
+        comment_score = #{commentScore,jdbcType=INTEGER},
+      </if>
+      <if test="commentContent != null">
+        comment_content = #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="userNickname != null">
+        user_nickname = #{userNickname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isReview != null">
+        is_review = #{isReview,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.vp.bean.OrderComment">
+    update tb_order_comment
+    set order_id = #{orderId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      comment_score = #{commentScore,jdbcType=INTEGER},
+      comment_content = #{commentContent,jdbcType=VARCHAR},
+      user_nickname = #{userNickname,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      is_review = #{isReview,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

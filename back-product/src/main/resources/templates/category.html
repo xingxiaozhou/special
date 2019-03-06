@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="commons/fragement :: head"></head>
+<script type="text/javascript" th:src="@{/js/jquery-1.8.3.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.form.js}"></script>
+
+<script>
+    function queryByPages(pageNum) {
+        $("input[name=pageNum]").val(pageNum);
+        $("#menuForm").ajaxSubmit({
+            url: "getCategory.do",
+            dataType: "json",
+            data: {"pageNum": pageNum},
+            type: "post",
+            success: function (data) {
+                loadBody(data.pageInfo);
+            }
+
+        })
+    }
+
+
+    function loadBody(pages) {
+        $("tbody").html("");
+        $("tfoot").html("");
+        $.each(pages.list, function (n, vals) {
+            $("tbody").append("<tr id='" + vals.id + "'>\n" +
+                "                <td>" + vals.id + "</td>\n" +
+                "                <td>" + vals.cateTitle + "</a></td>\n" +
+                "                <td>" + (vals.cateType == 1 ? "固定分类" : "特定分类") + "</td>\n" +
+                "                <td><img style='width: 64px;height: 48px;' alt='暂无图片' src='" + vals.cateImg + "'></td>\n" +
+                "                <td><a href='categoryHandle.do?id=" + vals.id + "'>修改</a></td>\n" +
+                "                <td><a href='javascript:deleteById(" + vals.id + ")'>删除</a></td>\n" +
+                "              </tr>")
+        })
+        $("tfoot").append("<tr>\n" +
+            "                        <td colspan='7' id='page'>" +
+            "                        <input id='prePage' type='hidden' value='" + pages.prePage + "'>" +
+            "                        当前页&nbsp;" + pages.pageNum + ",共" + pages.pages + "页,总记录数&nbsp;" + pages.total + ".&nbsp;&nbsp;&nbsp;&nbsp;\n" +
+            "                        <a href='javascript:queryByPages(1);'>首页</a>&nbsp;" +
+            "                        </td>\n" +
+            "                        </tr>")
+        if (pages.hasPreviousPage) {
+            $("#page").append("<a href='javascript:queryByPages(" + pages.prePage + ");'>上一页</a>&nbsp;");
+        }
+        if (pages.hasNextPage) {
+            $("#page").append("<a href='javascript:queryByPages(" + pages.nextPage + ");'>下一页</a>&nbsp;\n");
+        }
+        $("#page").append("<a href='javascript:queryByPages(" + pages.pages + ");'>尾页</a>");
+    }
+
+    // 获取商品分类下的商品 如有商品则提示：请先删除该分类下的全部商品，再删除分类。
+    function deleteById(id) {
+        $.ajax({
+            url: "/delCategory.do",
+            dataType: "json",
+            data: {"id": id},
+            type: "get",
+            success: function (data) {
+                if (data.Product){
+                    alert("请先删除该分类下的全部商品，再删除分类");
+                    return;
+                }
+                var flag = data.isDel ? "删除成功" : "删除失败";
+                alert(flag);
+                refresh(data.num)
+            }
+        })
+    }
+
+    function refresh(list) {
+        var page = $("#prePage").val();
+        var currentPage = $("input[name=pageNum]").val();
+        $("#" + list).remove();
+        var content = $("tbody").html();
+        if (content == "") {
+            location.href = "javascript:queryByPages(" + page + ");"
+        }else {
+            location.href = "javascript:queryByPages(" + currentPage + ");"
+        }
+    }
+
+
+</script>
+<script th:inline="javascript">
+    $(function () {
+        /*<![CDATA[*/
+        var isDel = /*[[${isDel}]]*/ null;
+        /*]]>*/
+        if (isDel) {
+            alert("商品分类删除成功")
+        } else if (isDel) {
+            alert("商品分类删除失败");
+        }
+    })
+</script>
+
+<body onload="queryByPages(1)">
+<nav th:replace="commons/fragement :: bodyTop"></nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="commons/fragement :: bodyLeft"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div><h2>商品分类</h2></div>
+            <div style="clear: both"></div>
+            <div class="table-responsive">
+                <form method="post" enctype="multipart/form-data" id="menuForm" action="">
+                    &nbsp;&nbsp;&nbsp;
+                    分类名称:&nbsp;
+                    <select name="cateType">
+                        <option value="">默认</option>
+                        <option value="1">固定分类</option>
+                        <option value="2">特定分类</option>
+                    </select>&nbsp;&nbsp;&nbsp;
+                    <input type="button" value="查询" onclick="queryByPages(1)">
+                    <input type="hidden" name="pageNum">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>分类标题</th>
+                            <th>分类类别</th>
+                            <th>分类图片</th>
+                            <th colspan="3">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="commons/onload_js :: onloadJS"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" th:href="@{css/normalize.min.css}">
+	<link rel="stylesheet" th:href="@{css/style.css}">
+	<script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/js/jquery.form.js"></script>
+	<script>
+        // /**
+        //  * 提示信息
+        //  * @param status
+        //  */
+        // function checkStatus(status) {
+        //     switch (status){
+        //         /*case 401:
+        //             alert("用户名必须由3-10位字母、数字、下划线组成，且首位只能是字母");
+        //             break;*/
+        //         /*case 402:
+        //             alert("密码不能为空");
+        //             break;*/
+        //         /*case 403:
+        //             alert("密码长度必须在6-18位之间");
+        //             break;*/
+        //         case 404:
+        //             alert("邮箱不能为空");
+        //             break;
+        //         case 405:
+        //             alert("邮箱格式不正确");
+        //             break;
+        //         /*case 406:
+        //             alert("手机号码不符合规范");
+        //             break;*/
+        //         /*case 407:
+        //             alert("用户名已存在");
+        //             break;*/
+        //         /*case 408:
+        //             alert("手机号已存在");
+        //             break;*/
+        //         case 409:
+        //             alert("邮箱已存在");
+        //             break;
+        //         case 410:
+        //             alert("验证码错误");
+        //             break;
+        //         /* case 411:
+			// 		 alert("验证码已发送");
+			// 		 break;*/
+        //         case 412:
+        //             alert("验证码发送失败");
+        //             break;
+        //         case 413:
+        //             alert("验证码不能为空");
+        //             break;
+        //         case 414:
+        //             alert("验证码时间过期");
+        //             break;
+        //         /*case 415:
+			// 		alert("验证码输入正确");
+			// 		break;*/
+        //         case 416:
+        //             alert("获得验证码前后邮箱不一致");
+        //             break;
+        //         case 417:
+        //             alert("注册失败，信息异常");
+        //             break;
+			// 	case 418:
+			// 	    alert("邮箱不存在");
+			// 	    break;
+        //         case 1000:
+        //             alert("注册成功");
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // }
+
+        /**
+         * 验证码按钮特效
+         * @type {number}
+         */
+        var wait=60;
+        function setButtonStatus(that) {
+            if (wait == 0) {
+                that.removeAttribute("disabled");
+                that.value="免费获取验证码";
+                wait = 60;
+            } else {
+                that.setAttribute("disabled", true);
+                that.value=wait+"秒后可以重新发送";
+                wait--;
+                setTimeout(function() {
+                    setButtonStatus(that)
+                }, 1000)
+            }
+        }
+
+
+
+        /*
+        * Email校验方法
+      */
+        function validateEmail() {
+            var value = document.getElementById("userEmail").value.trim();
+            /*
+             * 1. 非空校验
+             */
+            if (!value) {
+                /*
+                 * 获取对应的label
+                 * 添加错误信息
+                 * 显示label
+                 */
+                document.getElementById("emailInfo").innerHTML = "Email不能为空！";
+                return false;
+            }
+            /*
+             * 2. Email格式校验
+             */
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(value)) {
+                /*
+                 * 获取对应的label
+                 * 添加错误信息
+                 * 显示label
+                 */
+                document.getElementById("emailInfo").innerHTML = "错误的Email格式！";
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "/api/v1/reg?email=" + value,
+                success: function (data) {
+                    var vCount = parseInt(data);
+                    if (vCount == 1) {
+                        return true;
+                    }
+                    else {
+                        document.getElementById("emailInfo").innerHTML = "该邮箱暂没注册！";
+                        return false;
+                    }
+                }
+            });
+            document.getElementById("emailInfo").innerHTML = "";
+            return true;
+        }
+
+
+
+        /**
+         * 获取验证码
+         * @param that
+         */
+        function checkEmail(that) {
+            if (!validateEmail()){
+                alert("请输入有效的邮箱")
+            }
+			if($("emailCode").val()==""){
+                return;
+			}
+            $("#findPwdForm").ajaxSubmit({
+                url: "/api/v1/sendEmailCode",
+                dataType: "json",
+                type: "post",
+                success: function (data) {
+                    if (data) {
+                        //邮箱验证成功
+                        setButtonStatus(that);
+                        alert("发送成功")
+                    } else {
+                        alert("发送失败")
+                    }
+                }
+            });
+
+        }
+
+        /**
+         * 检验验证码是否正确
+         */
+        $(function () {
+            $("#nextStep").click(function () {
+                $("#findPwdForm").ajaxSubmit({
+                    url:"/api/v1/emailCode",
+                    dataType:"json",
+                    type:"post",
+                    success:function (data) {
+                        if (data){
+                            location.href="/updatePwd.htm";
+                        }else {
+                            alert("验证码错误")
+						}
+                    }
+                })
+            })
+        })
+	</script>
+</head>
+<body>
+<div class="form">
+	<!--忘记密码-->
+	<div id="findPwd">
+		<h1>找回密码页面</h1>
+
+		<form action="/" method="post" id="findPwdForm">
+			<div class="field-wrap">
+				<input type="email"required autocomplete="off" placeholder="请输入邮箱*" id="userEmail" name="useremail" onblur="validateEmail()"/>
+				<span id="emailInfo"></span>
+			</div>
+
+			<div class="top-row">
+				<div class="field-wrap">
+					<input type="text" required autocomplete="off" placeholder="邮箱验证码*" id="emailCode" name="emailCode"/>
+				</div>
+
+				<div class="field-wrap">
+					<input type="button" required autocomplete="off" value="获取验证码" onclick="checkEmail(this)"/>
+				</div>
+			</div>
+
+			<button class="button button-block" id="nextStep" >下一步</button>
+
+		</form>
+
+	</div>
+</div>
+</body>
+</html>

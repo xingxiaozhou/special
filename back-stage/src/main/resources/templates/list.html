@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="commons/fragement :: head"></head>
+
+
+	<body>
+		<nav th:replace="commons/fragement :: bodyTop"></nav>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div th:replace="commons/fragement :: bodyLeft"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<div><h2>Welcome</h2></div>
+					<div style="margin-left: 50px"><h3 th:text="${session.loginUser.adminUser}"></h3></div>
+				</main>
+			</div>
+		</div>
+
+		<div th:replace="commons/onload_js :: onloadJS"></div>
+
+	</body>
+
+</html>
